@@ -2,22 +2,32 @@
 //
 
 #include "framework.h"
+#include "shellapi.h"
 #include "RectTiler.h"
 
 #define MAX_LOADSTRING 100
 #define LEFT_HOTKEY_ID 1
 #define RIGHT_HOTKEY_ID 2
+#define MY_TRAY_ICON_ID 1
+#define MY_TRAY_ICON_MESSAGE 10
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
+//HWND hWnd;                                      // Dialog Window
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+NOTIFYICONDATA niData;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+
+void                RegisterKeys(HWND);
+void                PositionWindow(int);
+void                CreateSystemTray(HWND);
+void                ExitTiler(HWND);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -99,18 +109,19 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
-
+   HWND hWnd = CreateDialog( hInstance,
+       MAKEINTRESOURCE(IDD_ABOUTBOX),
+       NULL,
+       (DLGPROC)WndProc);
+   
    if (!hWnd)
    {
       return FALSE;
    }
    
    RegisterKeys(hWnd);
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
-
+   CreateSystemTray(hWnd);
+   
    return TRUE;
 }
 
@@ -137,17 +148,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_HOTKEY:
         PositionWindow((int) wParam);
         break;
+    case MY_TRAY_ICON_MESSAGE:
+        switch (lParam)
+        {
+        case WM_LBUTTONUP:
+///***            ShowWindow(hWnd, SW_RESTORE);
+            break;
+        case WM_RBUTTONUP:
+            ExitTiler(hWnd);            
+            break;
+        }
+        break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
             // Parse the menu selections:
             switch (wmId)
             {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
             case IDM_EXIT:
-                DestroyWindow(hWnd);
+                ExitTiler(hWnd);
                 break;
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
@@ -169,6 +188,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
     return 0;
+}
+
+void ExitTiler(HWND hWnd)
+{
+    Shell_NotifyIcon(NIM_DELETE, &niData);
+    DestroyWindow(hWnd);
 }
 
 void PositionWindow(int option)
@@ -219,4 +244,24 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+void CreateSystemTray(HWND hWnd)
+{
+    
+    ZeroMemory(&niData, sizeof(NOTIFYICONDATA));
+    niData.cbSize = sizeof(NOTIFYICONDATA);
+    niData.uID = MY_TRAY_ICON_ID;
+    niData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    niData.hIcon = (HICON)LoadImage(
+        hInst,
+        MAKEINTRESOURCE(IDI_RECTTILER),
+        IMAGE_ICON,
+        GetSystemMetrics(SM_CXSMICON),
+        GetSystemMetrics(SM_CYSMICON),
+        LR_DEFAULTCOLOR);
+    niData.hWnd = hWnd;
+    niData.uCallbackMessage = MY_TRAY_ICON_MESSAGE;
+
+    Shell_NotifyIcon(NIM_ADD, &niData);
 }
