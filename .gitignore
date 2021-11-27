@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+.vs/
+RectTiler/x64/
+x64/
