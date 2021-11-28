@@ -11,6 +11,8 @@ void RegisterKeys(HWND hWnd)
     RegisterHotKey(hWnd, RIGHT_HOTKEY_ID, 6, VK_RIGHT);
     RegisterHotKey(hWnd, TOP_LEFT_HOTKEY_ID, 7, VK_LEFT);
     RegisterHotKey(hWnd, TOP_RIGHT_HOTKEY_ID, 7, VK_RIGHT);
+    RegisterHotKey(hWnd, BOTTOM_LEFT_HOTKEY_ID, 5, VK_LEFT);
+    RegisterHotKey(hWnd, BOTTOM_RIGHT_HOTKEY_ID, 5, VK_RIGHT);
 }
 
 void DeregisterEverything(void)
@@ -35,17 +37,24 @@ void PositionWindow(int option)
     switch (option)
     {
     case LEFT_HOTKEY_ID:
-        windowRect = GetWindowLeftTwoThird(rectScreen);
+        windowRect = GetWindowLeft(rectScreen);
         break;
     case RIGHT_HOTKEY_ID:
-        windowRect = GetWindowRightTwoThird(rectScreen);
+        windowRect = GetWindowRight(rectScreen);
         break;
     case TOP_LEFT_HOTKEY_ID:
-        windowRect = GetWindowTopLeftTwoThird(rectScreen);
+        windowRect = GetWindowTopLeft(rectScreen);
         break;
     case TOP_RIGHT_HOTKEY_ID:
-        windowRect = GetWindowTopRightTwoThird(rectScreen);
+        windowRect = GetWindowTopRight(rectScreen);
         break;
+    case BOTTOM_LEFT_HOTKEY_ID:
+        windowRect = GetWindowBottomLeft(rectScreen);
+        break;
+    case BOTTOM_RIGHT_HOTKEY_ID:
+        windowRect = GetWindowBottomRight(rectScreen);
+        break;
+
     default:
         return;
     }
@@ -61,7 +70,7 @@ SIZE GetScreenSize(RECT rectScreen)
     return size;
 }
 
-RECT GetWindowLeftTwoThird(RECT rectScreen)
+RECT GetWindowLeft(RECT rectScreen)
 {
     SIZE size = GetScreenSize(rectScreen);
 
@@ -75,7 +84,7 @@ RECT GetWindowLeftTwoThird(RECT rectScreen)
     return rect;
 }
 
-RECT GetWindowTopLeftTwoThird(RECT rectScreen)
+RECT GetWindowTopLeft(RECT rectScreen)
 {
     SIZE size = GetScreenSize(rectScreen);
 
@@ -89,7 +98,21 @@ RECT GetWindowTopLeftTwoThird(RECT rectScreen)
     return rect;
 }
 
-RECT GetWindowRightTwoThird(RECT rectScreen)
+RECT GetWindowBottomLeft(RECT rectScreen)
+{
+    SIZE size = GetScreenSize(rectScreen);
+
+    RECT rect = {
+        rectScreen.left,
+        rectScreen.top + (size.cy / 2),
+        2 * (size.cx / 3),
+        size.cy / 2
+    };
+
+    return rect;
+}
+
+RECT GetWindowRight(RECT rectScreen)
 {
     SIZE size = GetScreenSize(rectScreen);
 
@@ -103,13 +126,27 @@ RECT GetWindowRightTwoThird(RECT rectScreen)
     return rect;
 }
 
-RECT GetWindowTopRightTwoThird(RECT rectScreen)
+RECT GetWindowTopRight(RECT rectScreen)
 {
     SIZE size = GetScreenSize(rectScreen);
 
     RECT rect = {
         rectScreen.right - (2 * (size.cx / 3)),
         rectScreen.top,
+        2 * (size.cx / 3),
+        size.cy / 2
+    };
+
+    return rect;
+}
+
+RECT GetWindowBottomRight(RECT rectScreen)
+{
+    SIZE size = GetScreenSize(rectScreen);
+
+    RECT rect = {
+        rectScreen.right - (2 * (size.cx / 3)),
+        rectScreen.top + (size.cy / 2),
         2 * (size.cx / 3),
         size.cy / 2
     };
