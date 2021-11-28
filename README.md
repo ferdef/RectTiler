@@ -3,6 +3,12 @@ Small Tool to tile windows to 2/3 of the size of the screen
 
 ## Changelog:
 
+### 2021-11-28
+
+* Removed unneeded code
+* App shows shortcuts in Dialog.
+* Dialog allows you  to Exit the App
+
 ### 2021-11-27
 
 * App opens and allows the user to relocate any active window to the left or right side of its current display, ocuppying 2/3 of such screen.
