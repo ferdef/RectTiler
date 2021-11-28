@@ -19,6 +19,8 @@ Small Tool to tile windows to 2/3 of the size of the screen
 
 * Ability to change Keyboard shortcuts
 * Let window to be resized to 1/3, 1/2 and 2/3
+* Let user also place windows at the corners of the screen (top-left, top-right, bottom-left, bottom-right)
+* Let user place windows at the top half or bottm half of the screen
 
 ## Bugs
 
