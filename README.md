@@ -19,3 +19,7 @@ Small Tool to tile windows to 2/3 of the size of the screen
 
 * Ability to change Keyboard shortcuts
 * Let window to be resized to 1/3, 1/2 and 2/3
+
+## Bugs
+
+* Although the window is being horizontally positioned at 0, it still shows a gap between the screen edge and the window, most possibly caused by Aero and shadow sections. Needs to be handled
