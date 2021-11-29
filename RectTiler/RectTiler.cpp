@@ -6,7 +6,6 @@
 HINSTANCE hInst; // current instance
 
 // Forward declarations of functions included in this code module:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 INT_PTR CALLBACK    DlgProc(HWND, UINT, WPARAM, LPARAM);
 
