@@ -32,15 +32,19 @@ void PositionWindow(int option)
     GetMonitorInfo(monitor, (LPMONITORINFO)&info);
     rectScreen = info.rcWork;
     
+    RECT currentWindowRect;
+    GetWindowRect(hWnd, &currentWindowRect);
+    currentWindowRect.right -= currentWindowRect.left;
+    currentWindowRect.bottom -= currentWindowRect.top;
     RECT windowRect;
 
     switch (option)
     {
     case LEFT_HOTKEY_ID:
-        windowRect = GetWindowLeft(rectScreen);
+        windowRect = GetWindowLeft(rectScreen, currentWindowRect);
         break;
     case RIGHT_HOTKEY_ID:
-        windowRect = GetWindowRight(rectScreen);
+        windowRect = GetWindowRight(rectScreen, currentWindowRect);
         break;
     case TOP_LEFT_HOTKEY_ID:
         windowRect = GetWindowTopLeft(rectScreen);
@@ -70,18 +74,86 @@ SIZE GetScreenSize(RECT rectScreen)
     return size;
 }
 
-RECT GetWindowLeft(RECT rectScreen)
+RECT* GetLeftRects(RECT rectScreen, RECT* rects)
 {
     SIZE size = GetScreenSize(rectScreen);
 
-    RECT rect = {
+    rects[0] = {
         rectScreen.left,
         rectScreen.top,
         2 * (size.cx / 3),
         size.cy
     };
+    rects[1] = {
+        rectScreen.left,
+        rectScreen.top,
+        size.cx / 2,
+        size.cy
+    };
+    rects[2] = {
+        rectScreen.left,
+        rectScreen.top,
+        (size.cx / 3),
+        size.cy
+    };
 
-    return rect;
+    return rects;
+}
+
+RECT* GetRightRects(RECT rectScreen, RECT* rects)
+{
+    SIZE size = GetScreenSize(rectScreen);
+
+    rects[0] = {
+        rectScreen.right - (2 * (size.cx / 3)),
+        rectScreen.top,
+        2 * (size.cx / 3),
+        size.cy
+    };
+    rects[1] = {
+        rectScreen.right - (size.cx / 2),
+        rectScreen.top,
+        size.cx / 2,
+        size.cy
+    };
+    rects[2] = {
+        rectScreen.right - (size.cx / 3),
+        rectScreen.top,
+        (size.cx / 3),
+        size.cy
+    };
+
+    return rects;
+}
+
+int GetRect(RECT* rects, RECT currentWindowRect)
+{
+    int i;
+
+    for (i = 0; i < 3; i++)
+    {
+        if (rects[i].left == currentWindowRect.left &&
+            rects[i].top == currentWindowRect.top &&
+            rects[i].right == currentWindowRect.right &&
+            rects[i].bottom == currentWindowRect.bottom)
+        {
+            break;
+        }
+    }
+
+    i++;
+    if (i >= 3) i = 0;
+
+    return i;
+}
+
+RECT GetWindowLeft(RECT rectScreen, RECT currentWindowRect)
+{
+    RECT rects[3];
+    GetLeftRects(rectScreen, rects); 
+    int index = GetRect(rects, currentWindowRect);
+
+    return rects[index];
 }
 
 RECT GetWindowTopLeft(RECT rectScreen)
@@ -112,18 +184,13 @@ RECT GetWindowBottomLeft(RECT rectScreen)
     return rect;
 }
 
-RECT GetWindowRight(RECT rectScreen)
+RECT GetWindowRight(RECT rectScreen, RECT currentWindowRect)
 {
-    SIZE size = GetScreenSize(rectScreen);
+    RECT rects[3];
+    GetRightRects(rectScreen, rects);
+    int index = GetRect(rects, currentWindowRect);
 
-    RECT rect = {
-        rectScreen.right - (2 * (size.cx / 3)), 
-        rectScreen.top, 
-        2 * (size.cx / 3), 
-        size.cy
-    };
-
-    return rect;
+    return rects[index];
 }
 
 RECT GetWindowTopRight(RECT rectScreen)
