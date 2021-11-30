@@ -8,6 +8,8 @@ Current shortcuts:
 * Ctrl + Shift + Alt + Right : Tile to Top Right side of current display
 * Shift + Alt + Left : Tile to Bottom Left side of current display
 * Shift + Alt + Right : Tile to Bottom Right side of current display
+* Ctrl + Shift + Up : Tile to Upper side of current display.
+* Ctrl + Shift + Down : Tile to Bottom side of current display.
 
 Repeating this combination will cycle among 2/3, 1/2 and 1/3 of the screen
 
