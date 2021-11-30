@@ -13,6 +13,8 @@ void RegisterKeys(HWND hWnd)
     RegisterHotKey(hWnd, TOP_RIGHT_HOTKEY_ID, 7, VK_RIGHT);
     RegisterHotKey(hWnd, BOTTOM_LEFT_HOTKEY_ID, 5, VK_LEFT);
     RegisterHotKey(hWnd, BOTTOM_RIGHT_HOTKEY_ID, 5, VK_RIGHT);
+    RegisterHotKey(hWnd, TOP_HOTKEY_ID, 6, VK_UP);
+    RegisterHotKey(hWnd, BOTTOM_HOTKEY_ID, 6, VK_DOWN);
 }
 
 void DeregisterEverything(void)
@@ -205,6 +207,58 @@ RECT* GetBottomRightRects(RECT rectScreen, RECT* rects)
     return rects;
 }
 
+RECT* GetTopRects(RECT rectScreen, RECT* rects)
+{
+    SIZE size = GetScreenSize(rectScreen);
+
+    rects[0] = {
+        rectScreen.left,
+        rectScreen.top,
+        rectScreen.right,
+        2 * (size.cy / 3)
+    };
+    rects[1] = {
+        rectScreen.left,
+        rectScreen.top,
+        rectScreen.right,
+        size.cy / 2
+    };
+    rects[2] = {
+        rectScreen.left,
+        rectScreen.top,
+        rectScreen.right,
+        size.cy / 3
+    };
+
+    return rects;
+}
+
+RECT* GetBottomRects(RECT rectScreen, RECT* rects)
+{
+    SIZE size = GetScreenSize(rectScreen);
+
+    rects[0] = {
+        rectScreen.left,
+        rectScreen.top + (size.cy / 3),
+        rectScreen.right,
+        2 * (size.cy / 3)
+    };
+    rects[1] = {
+        rectScreen.left,
+        rectScreen.top + (size.cy / 2),
+        rectScreen.right,
+        size.cy / 2
+    };
+    rects[2] = {
+        rectScreen.left,
+        rectScreen.top + (2 * (size.cy / 3)),
+        rectScreen.right,
+        size.cy / 3
+    };
+
+    return rects;
+}
+
 int GetRect(RECT* rects, RECT currentWindowRect)
 {
     int i;
@@ -266,7 +320,12 @@ void PositionWindow(int option)
     case BOTTOM_RIGHT_HOTKEY_ID:
         GetBottomRightRects(rectScreen, rects);
         break;
-
+    case TOP_HOTKEY_ID:
+        GetTopRects(rectScreen, rects);
+        break;
+    case BOTTOM_HOTKEY_ID:
+        GetBottomRects(rectScreen, rects);
+        break;
     default:
         return;
     }
