@@ -11,6 +11,11 @@ Current shortcuts:
 
 ## Changelog:
 
+### 2021-11-30
+
+* Removed unneeded code
+* Window can now be resized to 1/3, 1/2 and 2/3 when attaching to Corners too
+
 ### 2021-11-28
 
 * Removed unneeded code
@@ -27,7 +32,7 @@ Current shortcuts:
 ## Missing Features
 
 * Ability to change Keyboard shortcuts
-* Let user place windows at the top half or bottm half of the screen
+* Let user place windows at the top half or bottom half of the screen
 
 ## Bugs
 
