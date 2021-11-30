@@ -20,49 +20,24 @@ void DeregisterEverything(void)
     Shell_NotifyIcon(NIM_DELETE, &niData);
 }
 
-void PositionWindow(int option)
+void CreateSystemTray(HINSTANCE hInst, HWND hWnd)
 {
-    RECT rectScreen;
 
-    HWND hWnd = GetForegroundWindow();
-    HMONITOR monitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
-    MONITORINFOEX info;
-    info.cbSize = sizeof(info);
+    ZeroMemory(&niData, sizeof(NOTIFYICONDATA));
+    niData.cbSize = sizeof(NOTIFYICONDATA);
+    niData.uID = MY_TRAY_ICON_ID;
+    niData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    niData.hIcon = (HICON)LoadImage(
+        hInst,
+        MAKEINTRESOURCE(IDI_RECTTILER),
+        IMAGE_ICON,
+        GetSystemMetrics(SM_CXSMICON),
+        GetSystemMetrics(SM_CYSMICON),
+        LR_DEFAULTCOLOR);
+    niData.hWnd = hWnd;
+    niData.uCallbackMessage = MY_TRAY_ICON_MESSAGE;
 
-    GetMonitorInfo(monitor, (LPMONITORINFO)&info);
-    rectScreen = info.rcWork;
-    
-    RECT currentWindowRect;
-    GetWindowRect(hWnd, &currentWindowRect);
-    currentWindowRect.right -= currentWindowRect.left;
-    currentWindowRect.bottom -= currentWindowRect.top;
-    RECT windowRect;
-
-    switch (option)
-    {
-    case LEFT_HOTKEY_ID:
-        windowRect = GetWindowLeft(rectScreen, currentWindowRect);
-        break;
-    case RIGHT_HOTKEY_ID:
-        windowRect = GetWindowRight(rectScreen, currentWindowRect);
-        break;
-    case TOP_LEFT_HOTKEY_ID:
-        windowRect = GetWindowTopLeft(rectScreen);
-        break;
-    case TOP_RIGHT_HOTKEY_ID:
-        windowRect = GetWindowTopRight(rectScreen);
-        break;
-    case BOTTOM_LEFT_HOTKEY_ID:
-        windowRect = GetWindowBottomLeft(rectScreen);
-        break;
-    case BOTTOM_RIGHT_HOTKEY_ID:
-        windowRect = GetWindowBottomRight(rectScreen);
-        break;
-
-    default:
-        return;
-    }
-    SetWindowPos(hWnd, NULL, windowRect.left, windowRect.top, windowRect.right, windowRect.bottom, SWP_NOZORDER);
+    Shell_NotifyIcon(NIM_ADD, &niData);
 }
 
 SIZE GetScreenSize(RECT rectScreen)
@@ -126,6 +101,110 @@ RECT* GetRightRects(RECT rectScreen, RECT* rects)
     return rects;
 }
 
+RECT* GetTopLeftRects(RECT rectScreen, RECT* rects)
+{
+    SIZE size = GetScreenSize(rectScreen);
+
+    rects[0] = {
+        rectScreen.left,
+        rectScreen.top,
+        2 * (size.cx / 3),
+        size.cy / 2
+    };
+    rects[1] = {
+        rectScreen.left,
+        rectScreen.top,
+        size.cx / 2,
+        size.cy / 2
+    };
+    rects[2] = {
+        rectScreen.left,
+        rectScreen.top,
+        (size.cx / 3),
+        size.cy / 2
+    };
+
+    return rects;
+}
+
+RECT* GetTopRightRects(RECT rectScreen, RECT* rects)
+{
+    SIZE size = GetScreenSize(rectScreen);
+
+    rects[0] = {
+        rectScreen.right - (2 * (size.cx / 3)),
+        rectScreen.top,
+        2 * (size.cx / 3),
+        size.cy / 2
+    };
+    rects[1] = {
+        rectScreen.right - (size.cx / 2),
+        rectScreen.top,
+        size.cx / 2,
+        size.cy / 2
+    };
+    rects[2] = {
+        rectScreen.right - (size.cx / 3),
+        rectScreen.top,
+        (size.cx / 3),
+        size.cy / 2
+    };
+
+    return rects;
+}
+
+RECT* GetBottomLeftRects(RECT rectScreen, RECT* rects)
+{
+    SIZE size = GetScreenSize(rectScreen);
+
+    rects[0] = {
+        rectScreen.left,
+        rectScreen.top + (size.cy / 2),
+        2 * (size.cx / 3),
+        size.cy / 2
+    };
+    rects[1] = {
+        rectScreen.left,
+        rectScreen.top + (size.cy / 2),
+        size.cx / 2,
+        size.cy / 2
+    };
+    rects[2] = {
+        rectScreen.left,
+        rectScreen.top + (size.cy / 2),
+        (size.cx / 3),
+        size.cy / 2
+    };
+
+    return rects;
+}
+
+RECT* GetBottomRightRects(RECT rectScreen, RECT* rects)
+{
+    SIZE size = GetScreenSize(rectScreen);
+
+    rects[0] = {
+        rectScreen.right - (2 * (size.cx / 3)),
+        rectScreen.top + (size.cy / 2),
+        2 * (size.cx / 3),
+        size.cy / 2
+    };
+    rects[1] = {
+        rectScreen.right - (size.cx / 2),
+        rectScreen.top + (size.cy / 2),
+        size.cx / 2,
+        size.cy / 2
+    };
+    rects[2] = {
+        rectScreen.right - (size.cx / 3),
+        rectScreen.top + (size.cy / 2),
+        (size.cx / 3),
+        size.cy / 2
+    };
+
+    return rects;
+}
+
 int GetRect(RECT* rects, RECT currentWindowRect)
 {
     int i;
@@ -147,96 +226,53 @@ int GetRect(RECT* rects, RECT currentWindowRect)
     return i;
 }
 
-RECT GetWindowLeft(RECT rectScreen, RECT currentWindowRect)
+void PositionWindow(int option)
 {
+    RECT rectScreen;
+
+    HWND hWnd = GetForegroundWindow();
+    HMONITOR monitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+    MONITORINFOEX info;
+    info.cbSize = sizeof(info);
+
+    GetMonitorInfo(monitor, (LPMONITORINFO)&info);
+    rectScreen = info.rcWork;
+
+    RECT currentWindowRect;
+    GetWindowRect(hWnd, &currentWindowRect);
+    currentWindowRect.right -= currentWindowRect.left;
+    currentWindowRect.bottom -= currentWindowRect.top;
+    
+    RECT windowRect;
     RECT rects[3];
-    GetLeftRects(rectScreen, rects); 
+
+    switch (option)
+    {
+    case LEFT_HOTKEY_ID:
+        GetLeftRects(rectScreen, rects);
+        break;
+    case RIGHT_HOTKEY_ID:
+        GetRightRects(rectScreen, rects);
+        break;
+    case TOP_LEFT_HOTKEY_ID:
+        GetTopLeftRects(rectScreen, rects);
+        break;
+    case TOP_RIGHT_HOTKEY_ID:
+        GetTopRightRects(rectScreen, rects);
+        break;
+    case BOTTOM_LEFT_HOTKEY_ID:
+        GetBottomLeftRects(rectScreen, rects);
+        break;
+    case BOTTOM_RIGHT_HOTKEY_ID:
+        GetBottomRightRects(rectScreen, rects);
+        break;
+
+    default:
+        return;
+    }
+    
     int index = GetRect(rects, currentWindowRect);
+    windowRect = rects[index];
 
-    return rects[index];
-}
-
-RECT GetWindowTopLeft(RECT rectScreen)
-{
-    SIZE size = GetScreenSize(rectScreen);
-
-    RECT rect = {
-        rectScreen.left,
-        rectScreen.top,
-        2 * (size.cx / 3),
-        size.cy / 2
-    };
-
-    return rect;
-}
-
-RECT GetWindowBottomLeft(RECT rectScreen)
-{
-    SIZE size = GetScreenSize(rectScreen);
-
-    RECT rect = {
-        rectScreen.left,
-        rectScreen.top + (size.cy / 2),
-        2 * (size.cx / 3),
-        size.cy / 2
-    };
-
-    return rect;
-}
-
-RECT GetWindowRight(RECT rectScreen, RECT currentWindowRect)
-{
-    RECT rects[3];
-    GetRightRects(rectScreen, rects);
-    int index = GetRect(rects, currentWindowRect);
-
-    return rects[index];
-}
-
-RECT GetWindowTopRight(RECT rectScreen)
-{
-    SIZE size = GetScreenSize(rectScreen);
-
-    RECT rect = {
-        rectScreen.right - (2 * (size.cx / 3)),
-        rectScreen.top,
-        2 * (size.cx / 3),
-        size.cy / 2
-    };
-
-    return rect;
-}
-
-RECT GetWindowBottomRight(RECT rectScreen)
-{
-    SIZE size = GetScreenSize(rectScreen);
-
-    RECT rect = {
-        rectScreen.right - (2 * (size.cx / 3)),
-        rectScreen.top + (size.cy / 2),
-        2 * (size.cx / 3),
-        size.cy / 2
-    };
-
-    return rect;
-}
-
-void CreateSystemTray(HINSTANCE hInst, HWND hWnd)
-{
-
-    ZeroMemory(&niData, sizeof(NOTIFYICONDATA));
-    niData.cbSize = sizeof(NOTIFYICONDATA);
-    niData.uID = MY_TRAY_ICON_ID;
-    niData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-    niData.hIcon = (HICON)LoadImage(
-        hInst,
-        MAKEINTRESOURCE(IDI_RECTTILER),
-        IMAGE_ICON,
-        GetSystemMetrics(SM_CXSMICON),
-        GetSystemMetrics(SM_CYSMICON),
-        LR_DEFAULTCOLOR);
-    niData.hWnd = hWnd;
-    niData.uCallbackMessage = MY_TRAY_ICON_MESSAGE;
-
-    Shell_NotifyIcon(NIM_ADD, &niData);
+    SetWindowPos(hWnd, NULL, windowRect.left, windowRect.top, windowRect.right, windowRect.bottom, SWP_NOZORDER);
 }

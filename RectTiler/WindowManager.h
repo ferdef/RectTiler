@@ -13,11 +13,3 @@ void RegisterKeys(HWND);
 void DeregisterEverything(void);
 void PositionWindow(int);
 void CreateSystemTray(HINSTANCE, HWND);
-
-RECT GetWindowLeft(RECT rectScreen, RECT currentWindowRect);
-RECT GetWindowTopLeft(RECT rectScreen);
-RECT GetWindowBottomLeft(RECT rectScreen);
-
-RECT GetWindowRight(RECT rectScreen, RECT currentWindowRect);
-RECT GetWindowTopRight(RECT rectScreen);
-RECT GetWindowBottomRight(RECT rectScreen);
