@@ -39,3 +39,7 @@ Repeating this combination will cycle among 2/3, 1/2 and 1/3 of the screen
 ## Bugs
 
 * Although the window is being horizontally positioned at 0, it still shows a gap between the screen edge and the window, most possibly caused by Aero and shadow sections. Needs to be handled
+
+## Thanks to
+
+http://www.fatcow.com/free-icons for the icon

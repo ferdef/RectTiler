@@ -1,5 +1,6 @@
 #include "framework.h"
 #include "shellapi.h"
+#include "strsafe.h"
 #include "WindowManager.h"
 #include "resource.h"
 
@@ -37,6 +38,10 @@ void CreateSystemTray(HINSTANCE hInst, HWND hWnd)
         GetSystemMetrics(SM_CYSMICON),
         LR_DEFAULTCOLOR);
     niData.hWnd = hWnd;
+    
+    StringCchCopy(niData.szTip,
+                  ARRAYSIZE(niData.szTip),
+                  TEXT("RectTiler"));
     niData.uCallbackMessage = MY_TRAY_ICON_MESSAGE;
 
     Shell_NotifyIcon(NIM_ADD, &niData);
