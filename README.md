@@ -2,12 +2,14 @@
 Small Tool to tile windows to 2/3 of the size of the screen
 
 Current shortcuts:
-* Ctrl + Shift + Left : Tile to Left side of current display. Repeating this combination will cycle among 2/3, 1/2 and 1/3 of the screen
-* Ctrl + Shift + Right : Tile to Right side of current display. Repeating this combination will cycle among 2/3, 1/2 and 1/3 of the screen
+* Ctrl + Shift + Left : Tile to Left side of current display.
+* Ctrl + Shift + Right : Tile to Right side of current display.
 * Ctrl + Shift + Alt + Left : Tile to Top Left side of current display
 * Ctrl + Shift + Alt + Right : Tile to Top Right side of current display
 * Shift + Alt + Left : Tile to Bottom Left side of current display
 * Shift + Alt + Right : Tile to Bottom Right side of current display
+
+Repeating this combination will cycle among 2/3, 1/2 and 1/3 of the screen
 
 ## Changelog:
 
