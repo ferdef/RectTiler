@@ -219,19 +219,19 @@ RECT* GetTopRects(RECT rectScreen, RECT* rects)
     rects[0] = {
         rectScreen.left,
         rectScreen.top,
-        rectScreen.right,
+        size.cx,
         2 * (size.cy / 3)
     };
     rects[1] = {
         rectScreen.left,
         rectScreen.top,
-        rectScreen.right,
+        size.cx,
         size.cy / 2
     };
     rects[2] = {
         rectScreen.left,
         rectScreen.top,
-        rectScreen.right,
+        size.cx,
         size.cy / 3
     };
 
@@ -245,19 +245,19 @@ RECT* GetBottomRects(RECT rectScreen, RECT* rects)
     rects[0] = {
         rectScreen.left,
         rectScreen.top + (size.cy / 3),
-        rectScreen.right,
+        size.cx,
         2 * (size.cy / 3)
     };
     rects[1] = {
         rectScreen.left,
         rectScreen.top + (size.cy / 2),
-        rectScreen.right,
+        size.cx,
         size.cy / 2
     };
     rects[2] = {
         rectScreen.left,
         rectScreen.top + (2 * (size.cy / 3)),
-        rectScreen.right,
+        size.cx,
         size.cy / 3
     };
 
